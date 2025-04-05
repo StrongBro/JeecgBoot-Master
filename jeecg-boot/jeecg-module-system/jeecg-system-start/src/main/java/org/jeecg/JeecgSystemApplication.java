@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 
 import java.net.InetAddress;
@@ -19,6 +20,7 @@ import java.util.Map;
 */
 @Slf4j
 @SpringBootApplication
+//@ComponentScan({"org.jeecg","org.zjc"})
 public class JeecgSystemApplication extends SpringBootServletInitializer {
 
     @Override

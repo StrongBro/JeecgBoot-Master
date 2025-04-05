@@ -2,7 +2,7 @@ import {defHttp} from '/@/utils/http/axios';
 import { useMessage } from "/@/hooks/web/useMessage";
 
 const { createConfirm } = useMessage();
-
+const prefix = '/${entityPackagePath}';
 enum Api {
   list = '/${entityPackagePath}/${entityName?uncap_first}/list',
   save= '/${entityPackagePath}/${entityName?uncap_first}/add',

@@ -17,9 +17,9 @@ import { setupI18n } from '/@/locales/setupI18n';
 import { registerGlobComp } from '/@/components/registerGlobComp';
 import { registerThirdComp } from '/@/settings/registerThirdComp';
 import { useSso } from '/@/hooks/web/useSso';
-import { checkIsQiankunMicro } from "/@/qiankun/micro";
-import { autoUseQiankunMicro } from "/@/qiankun/micro/qiankunMicro";
-import { useAppStoreWithOut } from "@/store/modules/app";
+import { checkIsQiankunMicro } from '/@/qiankun/micro';
+import { autoUseQiankunMicro } from '/@/qiankun/micro/qiankunMicro';
+import { useAppStoreWithOut } from '@/store/modules/app';
 
 // 注册online模块lib
 import { registerPackages } from '/@/utils/monorepo/registerPackages';
@@ -91,7 +91,7 @@ async function bootstrap(props?: MainAppProps) {
   // 挂载应用
   app.mount(getMountContainer(props), true);
 
-  console.log(" vue3 app 加载完成！")
+  console.log(' vue3 app 加载完成！');
 
   return app
 }
@@ -110,23 +110,23 @@ function getMainAppProps(): MainAppProps {
   // 从 queryString 中获取
   const searchParams = new URLSearchParams(window.location.search);
   // 隐藏侧边栏（菜单）
-  let hideSider = searchParams.get('hideSider') === 'true';
+  const hideSider = searchParams.get('hideSider') === 'true';
   // 隐藏顶部
-  let hideHeader = searchParams.get('hideHeader') === 'true';
+  const hideHeader = searchParams.get('hideHeader') === 'true';
   // 隐藏 多Tab 切换
-  let hideMultiTabs = searchParams.get('hideMultiTabs') === 'true';
+  const hideMultiTabs = searchParams.get('hideMultiTabs') === 'true';
 
   return {
     hideSider,
     hideHeader,
-    hideMultiTabs
-  }
+    hideMultiTabs,
+  };
 }
 
 // 配置主应用参数
 function setupProps(props?: MainAppProps) {
   if (!props) {
-    return
+    return;
   }
   const appStore = useAppStoreWithOut();
   appStore.setMainAppProps(props);

@@ -1,8 +1,9 @@
 package org.jeecg.config.init;
 
 import cn.hutool.core.io.FileUtil;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.io.Resource;
@@ -19,9 +20,9 @@ import java.nio.charset.StandardCharsets;
  * 解决JAR发布需要手工配置代码生成器模板问题
  * @author zhang
  */
-@Slf4j
 @Component
 public class CodeTemplateInitListener implements ApplicationListener<ApplicationReadyEvent> {
+    private static final Logger log = LoggerFactory.getLogger(CodeTemplateInitListener.class);
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
@@ -30,7 +31,7 @@ public class CodeTemplateInitListener implements ApplicationListener<Application
             log.info(" Init Code Generate Template [ 检测如果是JAR启动，Copy模板到config目录 ] ");
             this.initJarConfigCodeGeneratorTemplate();
             long endTime = System.currentTimeMillis(); // 记录结束时间
-            log.info(" Init Code Generate Template completed in " + (endTime - startTime) + " ms"); // 计算并记录耗时
+            log.info(" Init Code Generate Template completed in {} ms", endTime - startTime); // 计算并记录耗时
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -61,7 +62,7 @@ public class CodeTemplateInitListener implements ApplicationListener<Application
                 continue;
             }
             if (!FileUtil.exist(createFilePath)) {
-                log.info("create file codeTemplate = " + createFilePath);
+                log.info("create file codeTemplate = {}", createFilePath);
                 FileUtil.writeString(IOUtils.toString(url, StandardCharsets.UTF_8), createFilePath, "UTF-8");
             }
         }
