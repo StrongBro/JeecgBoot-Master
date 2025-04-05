@@ -63,7 +63,7 @@ public class DictAspect {
     	long time1=System.currentTimeMillis();	
         Object result = pjp.proceed();
         long time2=System.currentTimeMillis();
-        log.debug("获取JSON数据 耗时："+(time2-time1)+"ms");
+        log.debug("获取JSON数据 耗时：{}ms", time2 - time1);
         long start=System.currentTimeMillis();
         result=this.parseDictText(result);
         long end=System.currentTimeMillis();

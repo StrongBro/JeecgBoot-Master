@@ -13,7 +13,6 @@ public class TemplateMessageDTO extends TemplateDTO implements Serializable {
 
     private static final long serialVersionUID = 411137565170647585L;
 
-
     /**
      * 发送人(用户登录账户)
      */

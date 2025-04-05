@@ -44,6 +44,7 @@ public class DynamicTableAspect {
         //存储版本号到本地线程变量
         ThreadLocalDataHelper.put(CommonConstant.VERSION, version);
         //存储表名到本地线程变量
+
         ThreadLocalDataHelper.put(CommonConstant.DYNAMIC_TABLE_NAME, dynamicTable.value());
         //执行方法
         Object result = point.proceed();

@@ -32,6 +32,11 @@ spring:
         namespace: @config.namespace@
         username: @config.username@
         password: @config.password@
+
+    loadbalancer:
+      nacos:
+        enabled: true
+
     gateway:
       discovery:
         locator:

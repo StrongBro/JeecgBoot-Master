@@ -8,6 +8,8 @@ import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.modules.oss.entity.OssFile;
 import org.jeecg.modules.oss.service.IOssFileService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -23,10 +25,10 @@ import lombok.extern.slf4j.Slf4j;
  * 云存储示例 DEMO
  * @author: jeecg-boot
  */
-@Slf4j
 @Controller
 @RequestMapping("/sys/oss/file")
 public class OssFileController {
+	private static final Logger log = LoggerFactory.getLogger(OssFileController.class);
 
 	@Autowired
 	private IOssFileService ossFileService;
