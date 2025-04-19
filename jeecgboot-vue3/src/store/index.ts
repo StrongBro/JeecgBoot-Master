@@ -4,7 +4,7 @@ import { createPinia } from 'pinia';
 
 let app: Nullable<App<Element>> = null;
 let store: Nullable<Pinia> = null;
-
+// pinia其实就是类似redis的一个存储库，存储数据
 export function setupStore($app: App<Element>) {
   if (store == null) {
     store = createPinia();
