@@ -21,4 +21,4 @@ export function destroyStore() {
 // 获取app实例
 export const getAppContext = () => app?._context;
 
-export {app, store};
+export { app, store };

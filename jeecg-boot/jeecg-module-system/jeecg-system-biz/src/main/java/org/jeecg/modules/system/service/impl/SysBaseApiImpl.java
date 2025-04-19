@@ -83,16 +83,13 @@ public class SysBaseApiImpl implements ISysBaseAPI {
 	/** 当前系统数据库类型 */
 	private static String DB_TYPE = "";
 
-	@Autowired
-	private ISysMessageTemplateService sysMessageTemplateService;
+	private final ISysMessageTemplateService sysMessageTemplateService;
 	@Resource
 	private SysUserMapper userMapper;
 	@Resource
 	private SysUserRoleMapper sysUserRoleMapper;
-	@Autowired
-	private ISysDepartService sysDepartService;
-	@Autowired
-	private ISysDictService sysDictService;
+	private final ISysDepartService sysDepartService;
+	private final ISysDictService sysDictService;
 	@Resource
 	private SysAnnouncementMapper sysAnnouncementMapper;
 	@Resource
@@ -105,37 +102,48 @@ public class SysBaseApiImpl implements ISysBaseAPI {
 	private SysDepartMapper departMapper;
 	@Resource
 	private SysCategoryMapper categoryMapper;
-	@Autowired
-	private ISysDataSourceService dataSourceService;
-	@Autowired
-	private ISysUserDepartService sysUserDepartService;
+	private final ISysDataSourceService dataSourceService;
+	private final ISysUserDepartService sysUserDepartService;
 	@Resource
 	private SysPermissionMapper sysPermissionMapper;
-	@Autowired
-	private ISysPermissionDataRuleService sysPermissionDataRuleService;
-	@Autowired
-	private ThirdAppWechatEnterpriseServiceImpl wechatEnterpriseService;
-	@Autowired
-	private ThirdAppDingtalkServiceImpl dingtalkService;
-	@Autowired
+	private final ISysPermissionDataRuleService sysPermissionDataRuleService;
+	private final ThirdAppWechatEnterpriseServiceImpl wechatEnterpriseService;
+	private final ThirdAppDingtalkServiceImpl dingtalkService;
+	final
 	ISysCategoryService sysCategoryService;
-	@Autowired
-	private ISysUserService sysUserService;
-	@Autowired
-	private ISysDataLogService sysDataLogService;
-	@Autowired
-	private ISysRoleService sysRoleService;
-	@Autowired
-	private ISysUserTenantService sysUserTenantService;
+	private final ISysUserService sysUserService;
+	private final ISysDataLogService sysDataLogService;
+	private final ISysRoleService sysRoleService;
+	private final ISysUserTenantService sysUserTenantService;
 
-	@Autowired
-	private ISysUserRoleService sysUserRoleService;
+	private final ISysUserRoleService sysUserRoleService;
 
-	@Autowired
-	private ISysUserPositionService sysUserPositionService;
+	private final ISysUserPositionService sysUserPositionService;
 
-	@Autowired
-	private IDictTableWhiteListHandler dictTableWhiteListHandler;
+	private final IDictTableWhiteListHandler dictTableWhiteListHandler;
+
+	public SysBaseApiImpl(ISysDepartService sysDepartService, ISysMessageTemplateService sysMessageTemplateService, ISysDictService sysDictService, ISysDataSourceService dataSourceService, QywxSendMsgHandle qywxSendMsgHandle, IDictTableWhiteListHandler dictTableWhiteListHandler, ISysUserDepartService sysUserDepartService, ISysPermissionDataRuleService sysPermissionDataRuleService, SystemSendMsgHandle systemSendMsgHandle, ThirdAppWechatEnterpriseServiceImpl wechatEnterpriseService, EmailSendMsgHandle emailSendMsgHandle, ThirdAppDingtalkServiceImpl dingtalkService, ISysUserTenantService sysUserTenantService, ISysRoleService sysRoleService, ISysCategoryService sysCategoryService, ISysUserService sysUserService, ISysUserRoleService sysUserRoleService, ISysDataLogService sysDataLogService, DdSendMsgHandle ddSendMsgHandle, ISysUserPositionService sysUserPositionService) {
+		this.sysDepartService = sysDepartService;
+		this.sysMessageTemplateService = sysMessageTemplateService;
+		this.sysDictService = sysDictService;
+		this.dataSourceService = dataSourceService;
+		this.qywxSendMsgHandle = qywxSendMsgHandle;
+		this.dictTableWhiteListHandler = dictTableWhiteListHandler;
+		this.sysUserDepartService = sysUserDepartService;
+		this.sysPermissionDataRuleService = sysPermissionDataRuleService;
+		this.systemSendMsgHandle = systemSendMsgHandle;
+		this.wechatEnterpriseService = wechatEnterpriseService;
+		this.emailSendMsgHandle = emailSendMsgHandle;
+		this.dingtalkService = dingtalkService;
+		this.sysUserTenantService = sysUserTenantService;
+		this.sysRoleService = sysRoleService;
+		this.sysCategoryService = sysCategoryService;
+		this.sysUserService = sysUserService;
+		this.sysUserRoleService = sysUserRoleService;
+		this.sysDataLogService = sysDataLogService;
+		this.ddSendMsgHandle = ddSendMsgHandle;
+		this.sysUserPositionService = sysUserPositionService;
+	}
 
 	@Override
 	//@SensitiveDecode
@@ -1552,17 +1560,13 @@ public class SysBaseApiImpl implements ISysBaseAPI {
 	//update-end---author:chenrui ---date:20231221  for：[issues/#5643]解决分布式下表字典跨库无法查询问题------------
 
 	//-------------------------------------流程节点发送模板消息-----------------------------------------------
-	@Autowired
-	private QywxSendMsgHandle qywxSendMsgHandle;
+	private final QywxSendMsgHandle qywxSendMsgHandle;
 
-	@Autowired
-	private SystemSendMsgHandle systemSendMsgHandle;
+	private final SystemSendMsgHandle systemSendMsgHandle;
 
-	@Autowired
-	private EmailSendMsgHandle emailSendMsgHandle;
+	private final EmailSendMsgHandle emailSendMsgHandle;
 
-	@Autowired
-	private DdSendMsgHandle ddSendMsgHandle;
+	private final DdSendMsgHandle ddSendMsgHandle;
 
 	@Override
 	public void sendTemplateMessage(MessageDTO message) {

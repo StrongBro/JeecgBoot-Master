@@ -27,10 +27,13 @@ import java.util.Set;
 @RequestMapping("/sys/api")
 public class SystemApiController {
 
-    @Autowired
-    private SysBaseApiImpl sysBaseApi;
-    @Autowired
-    private ISysUserService sysUserService;
+    private final SysBaseApiImpl sysBaseApi;
+    private final ISysUserService sysUserService;
+
+    public SystemApiController(SysBaseApiImpl sysBaseApi, ISysUserService sysUserService) {
+        this.sysBaseApi = sysBaseApi;
+        this.sysUserService = sysUserService;
+    }
 
     /**
      * 发送系统消息

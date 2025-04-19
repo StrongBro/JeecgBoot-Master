@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 public class WebSocket {
     
     /**线程安全Map*/
-    private static ConcurrentHashMap<String, Session> sessionPool = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, Session> sessionPool = new ConcurrentHashMap<>();
 
     /**
      * Redis触发监听名字
@@ -45,7 +45,7 @@ public class WebSocket {
     public void onOpen(Session session, @PathParam(value = "userId") String userId) {
         try {
             sessionPool.put(userId, session);
-            log.debug("【系统 WebSocket】有新的连接，总数为:" + sessionPool.size());
+            log.debug("【系统 WebSocket】有新的连接，总数为:{}", sessionPool.size());
         } catch (Exception e) {
         }
     }
@@ -75,7 +75,7 @@ public class WebSocket {
                 try {
                     //update-begin-author:taoyan date:20211012 for: websocket报错 https://gitee.com/jeecg/jeecg-boot/issues/I4C0MU
                     synchronized (session){
-                        log.debug("【系统 WebSocket】推送单人消息:" + message);
+                        log.debug("【系统 WebSocket】推送单人消息:{}", message);
                         session.getBasicRemote().sendText(message);
                     }
                     //update-end-author:taoyan date:20211012 for: websocket报错 https://gitee.com/jeecg/jeecg-boot/issues/I4C0MU
@@ -98,7 +98,7 @@ public class WebSocket {
                     log.error(e.getMessage(), e);
                 }
             }
-            log.debug("【系统 WebSocket】群发消息:" + message);
+            log.debug("【系统 WebSocket】群发消息:{}", message);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

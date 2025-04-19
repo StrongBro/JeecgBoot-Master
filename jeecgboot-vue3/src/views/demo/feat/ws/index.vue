@@ -9,7 +9,7 @@
         <hr class="my-4" />
 
         <div class="flex">
-          <a-input v-model:value="server" disabled>
+          <a-input v-model:value="server">
             <template #addonBefore> 服务地址 </template>
           </a-input>
           <a-button :type="getIsOpen ? 'danger' : 'primary'" @click="toggle">
@@ -61,14 +61,15 @@
     },
     setup() {
       const state = reactive({
-        server: 'ws://localhost:3300/test',
+        server: 'ws://localhost:8080/jeecg-boot/websocket/1234',
         sendValue: '',
         recordList: [] as { id: number; time: number; res: string }[],
       });
 
-      const { status, data, send, close, open } = useWebSocket(state.server, {
+      const { status, data, send, close, open } = useWebSocket(() => state.server, {
         autoReconnect: false,
         heartbeat: true,
+        immediate: false,
       });
 
       watchEffect(() => {
@@ -99,6 +100,7 @@
       }
 
       function toggle() {
+        console.log('ws url====' + state.server);
         if (getIsOpen.value) {
           close();
         } else {

@@ -191,7 +191,9 @@ export function usePopBiz(ob, tableRef?) {
    */
   function loadColumnsInfo() {
     const {code} = handleCodeParams(true)
+    console.log('code=============================', code);
     let url = `${configUrl.getColumns}${code}`;
+    console.log('url=>', url);
     //缓存key
     let groupIdKey = props.groupId ? `${props.groupId}${url}` : '';
     httpGroupRequest(() => defHttp.get({ url }, { isTransformResponse: false, successMessageMode: 'none' }), groupIdKey).then((res) => {
