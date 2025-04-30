@@ -284,6 +284,7 @@ logging:
   level:
     org.flywaydb: debug
     org.jeecg.modules.system.mapper: info
+#    root: debug
 knife4j:
   #开启增强配置
   enable: true

@@ -54,7 +54,7 @@ public class WebSocket {
     public void onClose(@PathParam("userId") String userId) {
         try {
             sessionPool.remove(userId);
-            log.debug("【系统 WebSocket】连接断开，总数为:" + sessionPool.size());
+            log.debug("【系统 WebSocket】连接断开，总数为:{}", sessionPool.size());
         } catch (Exception e) {
             e.printStackTrace();
         }

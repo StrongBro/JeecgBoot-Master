@@ -94,7 +94,7 @@
             <name>aliyun Repository</name>
             <url>https://maven.aliyun.com/repository/public</url>
             <snapshots>
-				<enabled>false</enabled>
+				<enabled>true</enabled>
 			</snapshots>
         </repository>
 		<repository>
