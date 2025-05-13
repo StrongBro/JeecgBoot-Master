@@ -111,11 +111,15 @@
       watchEffect(() => {
         if (data.value) {
           try {
-            const res = JSON.parse(data.value);
-            state.recordList.push(res);
+            const { portName, msg } = JSON.parse(data.value);
+            state.recordList.push({
+              res: msg,
+              id: Date.now(),
+              time: new Date().getTime(),
+            });
             notification.success({
-              message: '时间【' + formatToDateTime(new Date().getMilliseconds()) + '】收到串口消息:',
-              description: ,
+              message: '串口【' + portName + '】消息:',
+              description: msg,
             });
           } catch (error) {
             state.recordList.push({
@@ -126,31 +130,6 @@
           }
         }
       });
-      // watch(
-      //   () => data.value,
-      //   (newVal) => {
-      //     console.log('收到消息====' + newVal);
-      //     notification.success({
-      //       message: '时间【' + new Date().toLocaleDateString() + '】收到串口消息:',
-      //       description: newVal,
-      //     });
-      //     if (newVal) {
-      //       try {
-      //         const res = JSON.parse(newVal);
-      //         state.recordList.push(res);
-      //       } catch (error) {
-      //         state.recordList.push({
-      //           res: newVal,
-      //           id: Date.now(),
-      //           time: new Date().getTime(),
-      //         });
-      //       }
-      //     }
-      //   },
-      //   //添加 immediate: true 确保初始化时也会执行一次回调
-      //   { immediate: false }
-      // );
-
       const getIsOpen = computed(() => status.value === 'OPEN');
       const getTagColor = computed(() => (getIsOpen.value ? 'success' : 'red'));
 
@@ -170,7 +149,7 @@
         if (getIsOpen.value) {
           close();
         } else {
-          // state.server = state.basePrefix + '/' + state.portType + '/' + state.baudRate;
+          state.server = state.basePrefix + '/' + state.portType + '/' + state.baudRate;
           open();
         }
       }

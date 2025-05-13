@@ -198,7 +198,7 @@ public class SerialPortManager {
                 if (session != null) {
                     JSONObject msg = new JSONObject();
                     msg.put("portName", portName);
-                    msg.put("data", message);
+                    msg.put("msg", message);
                     msg.put("time", System.currentTimeMillis());
 //                    Result<Object> result = Result.ok(message);
                     try {
