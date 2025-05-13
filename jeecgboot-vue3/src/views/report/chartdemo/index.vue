@@ -41,7 +41,7 @@
           <BarAndLine :chartData="barLineData" :customColor="barLineColors" height="50vh"></BarAndLine>
         </a-tab-pane>
         <a-tab-pane key="11" tab="排名列表">
-          <RankList title="门店销售排行榜" :list="rankList" style="width: 600px; margin: 0 auto"></RankList>
+          <RankList title="检测设备排行榜" :list="rankList" style="width: 600px; margin: 0 auto"></RankList>
         </a-tab-pane>
         <a-tab-pane key="13" tab="趋势">
           <trend title="Trend" term="Trend：" :percentage="30" />
@@ -71,7 +71,7 @@
   import BarAndLine from '/@/components/chart/BarAndLine.vue';
 
   const activeKey = ref('1');
-  const { barDataSource, barMultiData, pieData, barLineData, radarData,barLineColors } = getData;
+  const { barDataSource, barMultiData, pieData, barLineData, radarData, barLineColors } = getData;
   const multiBarOption = {
     title: { text: '多列柱状图', left: 'center' },
   };

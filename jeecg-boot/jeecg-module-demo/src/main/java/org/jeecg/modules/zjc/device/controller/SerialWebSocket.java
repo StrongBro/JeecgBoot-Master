@@ -3,6 +3,7 @@ package org.jeecg.modules.zjc.device.controller;
 import org.jeecg.common.base.BaseMap;
 import org.jeecg.common.constant.WebsocketConst;
 import org.jeecg.common.modules.redis.client.JeecgRedisClient;
+import org.jeecg.modules.zjc.serial.service.SerialPortManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -20,10 +22,11 @@ import java.util.concurrent.ConcurrentHashMap;
  **/
 
 @Component
-@ServerEndpoint(value = "/deviceWebSocket/{deviceId}")
-public class DeviceWebSocket {
-    private static final Logger log = LoggerFactory.getLogger(DeviceWebSocket.class);
-    private static final ConcurrentHashMap<String, Session> sessionPool = new ConcurrentHashMap<>();
+@ServerEndpoint(value = "/SerialWebSocket/{portName}/{baudRate}")
+public class SerialWebSocket {
+    private static final Logger log = LoggerFactory.getLogger(SerialWebSocket.class);
+    private static Map<String, Session> sessionPool;
+    private static SerialPortManager serialPortManager;
 
     /**
      * Redis触发监听名字
@@ -32,28 +35,44 @@ public class DeviceWebSocket {
 
     //避免初次调用出现空指针的情况
     private static JeecgRedisClient redisClient;
+
     @Autowired
-    private void setRedisClient(JeecgRedisClient jeecgRedisClient){
-        DeviceWebSocket.redisClient = jeecgRedisClient;
+    public void setSessionPool(Map<String, Session> sessionPool) {
+        SerialWebSocket.sessionPool = sessionPool;
     }
+
+    @Autowired
+    public void setSerialPortManager(SerialPortManager serialPortManager) {
+        SerialWebSocket.serialPortManager = serialPortManager;
+    }
+
+    @Autowired
+    public void setRedisClient(JeecgRedisClient jeecgRedisClient) {
+        SerialWebSocket.redisClient = jeecgRedisClient;
+    }
+
 
 
     //==========【websocket接受、推送消息等方法 —— 具体服务节点推送ws消息】========================================================================================
     @OnOpen
-    public void onOpen(Session session, @PathParam(value = "deviceId") String deviceId) {
-        log.info("【系统 deviceWebSocket】有新的连接，deviceId:{}", deviceId);
+    public void onOpen(Session session, @PathParam(value = "portName") String portName,@PathParam(value = "baudRate") Integer baudRate) {
+        log.info("【系统 deviceWebSocket】有新的连接，portName:{}", portName);
         try {
-            sessionPool.put(deviceId, session);
+            sessionPool.put(portName, session);
+            serialPortManager.openPort(portName, baudRate);
 //            log.debug("【系统 deviceWebSocket】有新的连接，总数为:{}", sessionPool.size());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("websocket onOpen发生异常(异常发生会关闭连接池资源):{}", e.getMessage());
+            sessionPool.remove(portName);
+            serialPortManager.closePort(portName);
         }
     }
 
     @OnClose
-    public void onClose(@PathParam("deviceId") String deviceId) {
+    public void onClose(@PathParam("portName") String portName) {
         try {
-            sessionPool.remove(deviceId);
+            sessionPool.remove(portName);
+            serialPortManager.closePort(portName);
             log.info("【系统 deviceWebSocket】连接断开，总数为:{}", sessionPool.size());
         } catch (Exception e) {
             e.printStackTrace();
@@ -63,14 +82,14 @@ public class DeviceWebSocket {
     /**
      * ws推送消息
      *
-     * @param deviceId
+     * @param portName
      * @param message
      */
-    public void pushMessage(String deviceId, String message) {
+    public void pushMessage(String portName, String message) {
 //        for (Map.Entry<String, Session> item : sessionPool.entrySet()) {
-//            //deviceId key值= {用户id + "_"+ 登录token的md5串}
+//            //portName key值= {用户id + "_"+ 登录token的md5串}
 //            //TODO vue2未改key新规则，暂时不影响逻辑
-//            if (item.getKey().contains(deviceId)) {
+//            if (item.getKey().contains(portName)) {
 //                Session session = item.getValue();
 //                try {
 //                    //update-begin-author:taoyan date:20211012 for: websocket报错 https://gitee.com/jeecg/jeecg-boot/issues/I4C0MU
@@ -84,7 +103,7 @@ public class DeviceWebSocket {
 //                }
 //            }
 //        }
-        Session session = sessionPool.get(deviceId);
+        Session session = sessionPool.get(portName);
         if (session != null) {
             try {
                 log.info("【系统 deviceWebSocket】推送单人消息:{}", message);
@@ -93,7 +112,7 @@ public class DeviceWebSocket {
                 log.error(e.getMessage(), e);
             }
         } else {
-            log.info("【系统 deviceWebSocket】推送单人消息失败,没有找到对应的session:{}", deviceId);
+            log.info("【系统 deviceWebSocket】推送单人消息失败,没有找到对应的session:{}", portName);
         }
     }
 
@@ -120,15 +139,17 @@ public class DeviceWebSocket {
      * ws接受客户端消息
      */
     @OnMessage
-    public void onMessage(String message, @PathParam(value = "deviceId") String deviceId) {
+    public void onMessage(String message, @PathParam(value = "portName") String portName) {
         if(!"ping".equals(message) && !WebsocketConst.CMD_CHECK.equals(message)){
             log.info("【系统 deviceWebSocket】收到客户端消息:{}", message);
-            this.sendMessage(deviceId, "your message is received");
-//            this.pushMessage(deviceId, "your message is received");
+//            this.sendMessage(portName, "your message is received");
+//            this.pushMessage(portName, "your message is received");
+            serialPortManager.sendToPort(portName,message.getBytes(StandardCharsets.UTF_8));
         }else{
             log.info("【系统deviceWebSocket】收到客户端心跳检测消息:{}", message);
             //update-begin---author:wangshuai---date:2024-05-07---for:【issues/1161】前端websocket因心跳导致监听不起作用---
-            this.sendMessage(deviceId, "I hear you and I am alive");
+//            this.sendMessage(portName, "I hear you and I am alive");
+            this.pushMessage(portName, "I hear you and I am alive");
             //update-end---author:wangshuai---date:2024-05-07---for:【issues/1161】前端websocket因心跳导致监听不起作用---
         }
 
@@ -165,33 +186,33 @@ public class DeviceWebSocket {
     public void sendMessage(String message) {
         //log.debug("【系统 WebSocket】广播消息:" + message);
         BaseMap baseMap = new BaseMap();
-        baseMap.put("deviceId", "");
+        baseMap.put("portName", "");
         baseMap.put("message", message);
-        redisClient.sendMessage(DeviceWebSocket.REDIS_TOPIC_NAME, baseMap);
+        redisClient.sendMessage(SerialWebSocket.REDIS_TOPIC_NAME, baseMap);
     }
 
     /**
      * 此为单点消息 redis
      *
-     * @param deviceId
+     * @param portName
      * @param message
      */
-    public void sendMessage(String deviceId, String message) {
+    public void sendMessage(String portName, String message) {
         BaseMap baseMap = new BaseMap();
-        baseMap.put("deviceId", deviceId);
+        baseMap.put("portName", portName);
         baseMap.put("message", message);
-        redisClient.sendMessage(DeviceWebSocket.REDIS_TOPIC_NAME, baseMap);
+        redisClient.sendMessage(SerialWebSocket.REDIS_TOPIC_NAME, baseMap);
     }
 
     /**
      * 此为单点消息(多人) redis
      *
-     * @param deviceIds
+     * @param portNames
      * @param message
      */
-    public void sendMessage(String[] deviceIds, String message) {
-        for (String deviceId : deviceIds) {
-            sendMessage(deviceId, message);
+    public void sendMessage(String[] portNames, String message) {
+        for (String portName : portNames) {
+            sendMessage(portName, message);
         }
     }
 }

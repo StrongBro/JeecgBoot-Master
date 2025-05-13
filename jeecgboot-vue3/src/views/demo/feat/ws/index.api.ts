@@ -11,7 +11,13 @@ enum Api {
   deleteBatch = '/serial/serialPort/deleteBatch',
   importExcel = '/serial/serialPort/importExcel',
   exportXls = '/serial/serialPort/exportXls',
+  availablePorts = '/serial/getAvailablePorts',
 }
+/**
+ * 列表接口
+ * @param params
+ */
+export const getAvailablePorts = () => defHttp.get({ url: Api.availablePorts });
 /**
  * 导出api
  * @param params
